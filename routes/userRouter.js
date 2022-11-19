@@ -22,8 +22,9 @@ router.route("/updateUserPassword/:id");
 //   .route("/updateMe")
 //   .patch(authController.protect, userController.updateMe);
 
-// router.route("/getAllusers").get(userController.getAllusers);
-// router.route("/getUserById/:id").get(userController.getUserById);
-// router.route("/getUserByRole").get(userController.getUserByRole);
+router.route("/getAllusers").get(userController.getAllusers);
+router.route("/getUserByNickname").get(userController.getUserByNickname);
+router.route("/getUserByRole").get(userController.getUserByRole);
+router.route("/disableMyAccount/:id").get(userController.disableMyAccount);
 
 module.exports = router;

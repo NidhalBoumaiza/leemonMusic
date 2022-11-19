@@ -26,22 +26,43 @@ createSendToken = (user, statuscode, res) => {
 };
 //--------------------------------------
 exports.signUp = catchAsync(async (req, res, next) => {
-  const newAccount = await Account.create({
-    email: req.body.email,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-    photo: req.body.photo,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    birthDate: req.body.birthDate,
-    role: req.body.role,
-  });
+  const newAccount = null;
+  if (req.body.role === "ARTIST") {
+    if (!req.body.cin || !req.body.nickName) {
+      return next(
+        new AppError(
+          "Vous devez ajouter votre cin et votre pseudo pour compléter votre inscription !",
+          500
+        )
+      );
+    } else {
+      const newAccount = await Account.create({
+        email: req.body.email,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm,
+        cin: req.body.cin,
+        firstName: req.body.firstName,
+        nickName: req.body.nickName,
+        lastName: req.body.lastName,
+        role: "ARTIST",
+      });
+    }
+  } else {
+    const newAccount = await Account.create({
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+    });
+  }
+
   const activeToken = newAccount.createActiveAccountToken();
   newAccount.activeAccountToken = activeToken;
   newAccount.activeAccountTokenExpires = Date.now() + 1000 * 60 * 60 * 1000;
   newAccount.save({ validateBeforeSave: false });
 
-  const activeURL = `${req.protocole}:///api/v1/users/accountActivation/${activeToken}`;
+  const activeURL = `${req.protocole}://api/v1/users/accountActivation/${activeToken}`;
   const message = `Click this link to active your account : ${activeURL}`;
   try {
     await sendEmail({
@@ -74,7 +95,7 @@ exports.activeAccount = catchAsync(async (req, res, next) => {
   if (!account) {
     return next(new AppError("The token is not valid !"));
   }
-  if (account.activeAccountTokenExpires < Date.now()) {
+  if (Date.now() > account.activeAccountTokenExpires) {
     await Account.findOneAndDelete({ activeAccountToken: token });
     return next(
       new AppError(
@@ -275,3 +296,5 @@ exports.updateUserPassword = catchAsync(async (req, res, next) => {
     console.log(err.message);
   }
 });
+
+//---------------Disable my account --------------------------------------------------

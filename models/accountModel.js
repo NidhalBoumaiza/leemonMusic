@@ -12,6 +12,10 @@ const accountSchema = mongoose.Schema({
     type: String,
     required: [true, "Please provide your last name !"],
   },
+  nickName: {
+    type: String,
+    unique: true,
+  },
   role: {
     type: String,
     enum: ["LISTENER", "ARTIST"],
@@ -24,7 +28,7 @@ const accountSchema = mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail],
   },
-  photo: String,
+  cin: String,
   password: {
     type: String,
     required: [true, "Please provide your password !"],
@@ -58,15 +62,15 @@ const accountSchema = mongoose.Schema({
   },
   accountStatus: {
     type: Boolean,
-    default: true,
+    default: false,
   },
+  disabledByAdmin: Boolean,
   activeAccountToken: { type: String, select: true },
   activeAccountTokenExpires: { type: Date, select: true },
-  active: Boolean,
 });
 //----- MIDDLEWERE -----------------------
 // accountSchema.pre(/^find/, async function (next) {
-//   this.find({ active: { $ne: false } });
+//   this.find({ accountStatus: { $ne: false } });
 //   next();
 // });
 accountSchema.pre("save", async function (next) {
