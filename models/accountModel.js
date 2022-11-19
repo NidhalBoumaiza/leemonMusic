@@ -67,6 +67,10 @@ const accountSchema = mongoose.Schema({
   disabledByAdmin: Boolean,
   activeAccountToken: { type: String, select: true },
   activeAccountTokenExpires: { type: Date, select: true },
+  validated: {
+    type: Boolean,
+    default: true,
+  },
 });
 //----- MIDDLEWERE -----------------------
 // accountSchema.pre(/^find/, async function (next) {

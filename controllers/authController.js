@@ -26,7 +26,7 @@ createSendToken = (user, statuscode, res) => {
 };
 //--------------------------------------
 exports.signUp = catchAsync(async (req, res, next) => {
-  const newAccount = null;
+  let newAccount = null;
   if (req.body.role === "ARTIST") {
     if (!req.body.cin || !req.body.nickName) {
       return next(
@@ -36,7 +36,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
         )
       );
     } else {
-      const newAccount = await Account.create({
+      newAccount = await Account.create({
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
@@ -45,10 +45,11 @@ exports.signUp = catchAsync(async (req, res, next) => {
         nickName: req.body.nickName,
         lastName: req.body.lastName,
         role: "ARTIST",
+        validated: false,
       });
     }
   } else {
-    const newAccount = await Account.create({
+    newAccount = await Account.create({
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
@@ -63,7 +64,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
   newAccount.save({ validateBeforeSave: false });
 
   const activeURL = `${req.protocole}://api/v1/users/accountActivation/${activeToken}`;
-  const message = `Click this link to active your account : ${activeURL}`;
+  const message = `Click this link to active your account :\n ${activeURL}`;
   try {
     await sendEmail({
       email: newAccount.email,
@@ -74,7 +75,8 @@ exports.signUp = catchAsync(async (req, res, next) => {
       status: "success",
       message: "Your activation Email has been send seccessfully ",
     });
-  } catch {
+  } catch (err) {
+    console.log(err);
     // newAccount.activeAccountToken = undefined;
     // newAccount.activeAccountTokenExpires = undefined;
     // newAccount.save({ validateBeforeSave: false });
@@ -121,6 +123,7 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!account) {
     return next(new AppError("Email or Password is incorrect", 401));
   }
+
   if (account && !(await account.correctPassword(password, account.password))) {
     if (Date.now() < account.loginAfter) {
       return next(
@@ -144,14 +147,56 @@ exports.login = catchAsync(async (req, res, next) => {
     }
     return next(new AppError("Email or Password is incorrect", 401));
   }
-  if (account.accountStatus == false) {
-    return next(new AppError("You have to active your account", 401));
+
+  if (account.accountStatus === false && account.disabledByAdmin === true) {
+    return next(
+      new AppError(
+        "Your account has been disabled by Admin due to something wrong that you did, please contact the admin .",
+        401
+      )
+    );
   }
+
+  if (account.accountStatus === false) {
+    const activeToken = account.createActiveAccountToken();
+    account.activeAccountToken = activeToken;
+    account.activeAccountTokenExpires = Date.now() + 1000 * 60 * 60 * 1000;
+    account.save({ validateBeforeSave: false });
+
+    const activeURL = `${req.protocole}://api/v1/users/accountActivation/${activeToken}`;
+    const message = `Click this link to active your account : ${activeURL}`;
+
+    try {
+      await sendEmail({
+        email: account.email,
+        subject: "Account activation after disabled",
+        message,
+      });
+
+      return res.status(200).json({
+        status: "success",
+        message: "Your activation Email has been send seccessfully ",
+      });
+    } catch {
+      // newAccount.activeAccountToken = undefined;
+      // newAccount.activeAccountTokenExpires = undefined;
+      // newAccount.save({ validateBeforeSave: false });
+      return next(
+        new AppError(
+          "Something wrong happened during the eamil sending ! please try later :)",
+          500
+        )
+      );
+    }
+  }
+
   account.failedLogin = 0;
   account.loginAfter = undefined;
   account.save({ validateBeforeSave: false });
   createSendToken(account, 200, res);
+  console.log("asba");
 });
+
 //-----------------------------------------
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) verify if the user is loged in :
