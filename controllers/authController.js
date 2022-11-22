@@ -137,9 +137,10 @@ exports.login = catchAsync(async (req, res, next) => {
     }
     account.failedLogin = account.failedLogin + 1;
     account.save({ validateBeforeSave: false });
-    if (account.failedLogin > 10) {
+    if (account.failedLogin > 5) {
       account.loginAfter = Date.now() + 5 * 60 * 1000;
       account.failedLogin = 0;
+      account.save({ validateBeforeSave: false });
       return next(
         new AppError(
           `You tried many wrong times to connect , please try again after ${account.loginAfter} minutes`,
