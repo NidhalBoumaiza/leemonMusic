@@ -114,7 +114,7 @@ exports.activeAccountByAdmin = catchAsync(async (req, res, next) => {
   });
   res.status(201).json({
     status: "Success",
-    message: "Le compte est maintenant désactiver",
+    message: "Le compte est maintenant activé",
     account,
   });
 });
