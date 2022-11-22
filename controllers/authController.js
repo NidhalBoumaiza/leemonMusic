@@ -63,8 +63,10 @@ exports.signUp = catchAsync(async (req, res, next) => {
   newAccount.activeAccountTokenExpires = Date.now() + 1000 * 60 * 60 * 1000;
   newAccount.save({ validateBeforeSave: false });
 
-  const activeURL = `${req.protocole}://api/v1/users/accountActivation/${activeToken}`;
-  const message = `Click this link to active your account :\n ${activeURL}`;
+  const activeURL = `http://localhost:3000/activate/${activeToken}`;
+  const message = `Bonjour,\n
+  Merci de créer un compte a notre platform.\n
+  Pour activer votre compte accéder le lien suivant:\n ${activeURL}`;
   try {
     await sendEmail({
       email: newAccount.email,
@@ -165,8 +167,8 @@ exports.login = catchAsync(async (req, res, next) => {
 
     const activeURL = `http://localhost:3000/activate/${activeToken}`;
     const message = `Bonjour,\n
-    Merci de créer un compte a notre platform.\n
-    Pour activer votre compte accéder le lien suivant:\n ${activeURL}`;
+    Vous avez désactiver votre compte.\n
+    Pour activer votre compte une autre fois.\n Accéder le lien suivant:   ${activeURL}`;
 
     try {
       await sendEmail({
