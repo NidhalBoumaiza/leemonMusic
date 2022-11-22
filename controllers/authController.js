@@ -194,7 +194,6 @@ exports.login = catchAsync(async (req, res, next) => {
   account.loginAfter = undefined;
   account.save({ validateBeforeSave: false });
   createSendToken(account, 200, res);
-  console.log("asba");
 });
 
 //-----------------------------------------
