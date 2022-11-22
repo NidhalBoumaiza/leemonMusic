@@ -50,4 +50,8 @@ router
   .route("/disableAccountByAdmin/:id")
   .patch(authController.protect, userController.disableAccountByAdmin);
 
+router
+  .route("/disableAccountByAdmin/:id")
+  .patch(authController.protect, userController.activeAccountByAdmin);
+
 module.exports = router;
