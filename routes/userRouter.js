@@ -23,34 +23,26 @@ router
 //   .route("/updateMe")
 //   .patch(authController.protect, userController.updateMe);
 
-router
-  .route("/getAllusers")
-  .get(
-    authController.restrictTo("Admin"),
-    authController.protect,
-    userController.getAllusers
-  );
-router
-  .route("/getUserByNickname")
-  .get(
-    authController.restrictTo("Admin"),
-    authController.protect,
-    userController.getUserByNickname
-  );
-router
-  .route("/getAllListener")
-  .get(
-    authController.restrictTo("Admin"),
-    authController.protect,
-    userController.getAllListener
-  );
-router
-  .route("/getAllArtists")
-  .get(
-    authController.restrictTo("Admin"),
-    authController.protect,
-    userController.getAllArtists
-  );
+router.route("/getAllusers").get(
+  // authController.restrictTo("Admin"),
+  // authController.protect,
+  userController.getAllusers
+);
+router.route("/getUserByNickname").get(
+  // authController.restrictTo("Admin"),
+  // authController.protect,
+  userController.getUserByNickname
+);
+router.route("/getAllListener").get(
+  // authController.restrictTo("Admin"),
+  // authController.protect,
+  userController.getAllListener
+);
+router.route("/getAllArtists").get(
+  // authController.restrictTo("Admin"),
+  // authController.protect,
+  userController.getAllArtists
+);
 router
   .route("/disableMyAccount")
   .patch(authController.protect, userController.disableMyAccount);

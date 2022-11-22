@@ -63,7 +63,7 @@ exports.getUserByNickname = catchAsync(async (req, res, next) => {
 
 exports.getAllListener = catchAsync(async (req, res, next) => {
   const listeners = await Account.find({ role: "LISTENER" });
-  req.status(200).json({
+  res.status(200).json({
     status: "success",
     listenersNumber: listeners.length,
     listeners,
@@ -74,7 +74,7 @@ exports.getAllListener = catchAsync(async (req, res, next) => {
 
 exports.getAllArtists = catchAsync(async (req, res, next) => {
   const Artists = await Account.find({ role: "ARTIST" });
-  req.status(200).json({
+  res.status(200).json({
     status: "success",
     ArtistsNumber: Artists.length,
     Artists,
