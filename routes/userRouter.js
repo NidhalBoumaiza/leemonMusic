@@ -33,7 +33,7 @@ router.route("/getUserByNickname").get(
   // authController.protect,
   userController.getUserByNickname
 );
-router.route("/getAllListener").get(
+router.route("/getAllListeners").get(
   // authController.restrictTo("Admin"),
   // authController.protect,
   userController.getAllListener
