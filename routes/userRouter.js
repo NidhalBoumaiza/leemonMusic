@@ -43,15 +43,13 @@ router.route("/getAllArtists").get(
   // authController.protect,
   userController.getAllArtists
 );
-router
-  .route("/disableMyAccount")
-  .patch(authController.protect, userController.disableMyAccount);
+router.route("/disableMyAccount").patch(userController.disableMyAccount);
 router
   .route("/disableAccountByAdmin/:id")
-  .patch(authController.protect, userController.disableAccountByAdmin);
+  .patch(userController.disableAccountByAdmin);
 
 router
-  .route("/disableAccountByAdmin/:id")
-  .patch(authController.protect, userController.activeAccountByAdmin);
+  .route("/activeAccountByAdmin/:0id")
+  .patch(userController.activeAccountByAdmin);
 
 module.exports = router;
