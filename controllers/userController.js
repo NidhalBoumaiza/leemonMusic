@@ -10,22 +10,6 @@ const filtredObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-///*************************************** */
-
-// exports.deleteMe = catchAsync(async (req, res, next) => {
-//   try {
-//     await Account.findByIdAndUpdate(req.user.id, { active: false });
-//     res.status(204).json({
-//       status: "success",
-//       data: null,
-//     });
-//   } catch {
-//     res.status(204).json({
-//       status: "Error",
-//       message: "Something wrong happened during Deleting your account ",
-//     });
-//   }
-// });
 // //*************************************** */
 // exports.updateMe = catchAsync(async (req, res, next) => {
 //   if (req.body.password || req.body.passwordConfirm) {
@@ -75,13 +59,25 @@ exports.getUserByNickname = catchAsync(async (req, res, next) => {
     user,
   });
 });
+//----------------------- get all listeners  -----------------------------------
 
-exports.getUserByRole = catchAsync(async (req, res, next) => {
-  const users = await Account.find({ role: req.body.role });
-  res.status(201).json({
+exports.getAllListener = catchAsync(async (req, res, next) => {
+  const listeners = await Account.find({ role: "LISTENER" });
+  req.status(200).json({
     status: "success",
-    accountNumber: users.length,
-    users,
+    listenersNumber: listeners.length,
+    listeners,
+  });
+});
+
+//----------------------- get all singers -----------------------------------
+
+exports.getAllArtists = catchAsync(async (req, res, next) => {
+  const Artists = await Account.find({ role: "ARTIST" });
+  req.status(200).json({
+    status: "success",
+    ArtistsNumber: Artists.length,
+    Artists,
   });
 });
 
