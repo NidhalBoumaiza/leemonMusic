@@ -49,7 +49,7 @@ router
   .patch(userController.disableAccountByAdmin);
 
 router
-  .route("/activeAccountByAdmin/:0id")
+  .route("/activeAccountByAdmin/:id")
   .patch(userController.activeAccountByAdmin);
 
 module.exports = router;
