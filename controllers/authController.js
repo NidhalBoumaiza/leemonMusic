@@ -193,7 +193,7 @@ exports.login = catchAsync(async (req, res, next) => {
   account.failedLogin = 0;
   account.loginAfter = undefined;
   account.save({ validateBeforeSave: false });
-  createSendToken(account, 200, res);
+  createSendToken(account.role, 200, res);
 });
 
 //-----------------------------------------
