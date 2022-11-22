@@ -163,8 +163,10 @@ exports.login = catchAsync(async (req, res, next) => {
     account.activeAccountTokenExpires = Date.now() + 1000 * 60 * 60 * 1000;
     account.save({ validateBeforeSave: false });
 
-    const activeURL = `${req.protocole}://api/v1/users/accountActivation/${activeToken}`;
-    const message = `Click this link to active your account : ${activeURL}`;
+    const activeURL = `http://localhost:3000/activate/${activeToken}`;
+    const message = `Bonjour,\n
+    Merci de créer un compte a notre platform.\n
+    Pour activer votre compte accéder le lien suivant:\n ${activeURL}`;
 
     try {
       await sendEmail({
@@ -257,10 +259,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const resetToken = account.createPasswordResetToken();
   account.save({ validateBeforeSave: false });
   // 3 - send the token to the client to use it and reset his password :
-  const resetURL = `${req.protocole}://api/v1/users/resetPassword/${resetToken}`;
-  const message = `forgot your password ? Submit a PATCH request with 
-    your new password and passwordConfirmirm to : ${resetURL}\n 
-     If you didn't forgot your password , please ignore this email  `;
+  const resetURL = `http://localhost:3000/reset/password/${resetToken}`;
+  const message = `Bonjour,\n
+  Vous avez oublié votre mot de passe ?\n
+  Voici un lien pour le réinitialiser.\n ${resetURL}
+  Si vous n'avez pas oublié votre mot de passe, veuillez ignorer cet e-mail  `;
   try {
     await sendEmail({
       email: account.email,
