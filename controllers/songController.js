@@ -51,7 +51,7 @@ exports.updateSong = catchAsync(async (req, res, next) => {
 });
 //---------------find song by name ------------------------------
 exports.findSongByName = catchAsync(async (req, res, next) => {
-  const songs = await Song.find({ songName: req.body.songName });
+  const songs = await Song.find({ songName: req.body.search });
   if (songs) {
     return res.status(200).json({
       status: "success",
@@ -67,7 +67,7 @@ exports.findSongByName = catchAsync(async (req, res, next) => {
 });
 //---------------- find song by category --------------------
 exports.findSongByCategory = catchAsync(async (req, res, next) => {
-  const songs = await Song.find({ category: req.body.category });
+  const songs = await Song.find({ category: req.body.search });
   if (songs) {
     return res.status(200).json({
       status: "success",
@@ -83,7 +83,7 @@ exports.findSongByCategory = catchAsync(async (req, res, next) => {
 });
 //----------------- find song by artist ------------------------
 exports.findSongByArtist = catchAsync(async (req, res, next) => {
-  const songs = await Song.find({ category: req.body.category });
+  const songs = await Song.find({ category: req.body.search });
   if (songs) {
     return res.status(200).json({
       status: "success",
