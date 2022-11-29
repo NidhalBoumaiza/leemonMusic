@@ -8,7 +8,6 @@ const {
   findByIdAndUpdate,
 } = require("../models/albumModel");
 const { json } = require("express");
-const Account = require("../models/accountModel");
 exports.addSong = catchAsync(async (req, res, next) => {
   let album = await Album.findOne({ albumName: req.body.albumName });
   const newSong = await Song.create({
@@ -123,3 +122,4 @@ exports.searchBar = catchAsync(async (req, res, next) => {
     singers,
   });
 });
+//--------------------- today hits -----------------------
