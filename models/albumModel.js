@@ -1,4 +1,4 @@
-/*const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const validator = require("validator");
 
 const albumSchema = mongoose.Schema({
@@ -17,8 +17,13 @@ const albumSchema = mongoose.Schema({
     type: String,
     enum: ["Single", "Album"],
   },
-  songs: [{ song: String, songName: String }],
+  songs: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: "Song",
+    },
+  ],
 });
 
 const Album = mongoose.model("Album", albumSchema);
-module.exports = Album;*/
+module.exports = Album;

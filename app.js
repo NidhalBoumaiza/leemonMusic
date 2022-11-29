@@ -9,7 +9,9 @@ const helmet = require("helmet");
 const app = express();
 //------------ROUTES----------------
 const userRouter = require("./routes/userRouter");
-
+const categoryRouter = require("./routes/categoryRouter");
+const albumRouter = require("./routes/albumRouter");
+const songRouter = require("./routes/songRouter");
 //------------------------------
 app.use(xss());
 app.use(mongoSanitize());
@@ -34,6 +36,9 @@ app.use((req, res, next) => {
 
 // 3) ROUTES
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/categories", categoryRouter);
+app.use("/api/v1/albums", albumRouter);
+app.use("/api/v1/songs", songRouter);
 
 app.all("*", (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

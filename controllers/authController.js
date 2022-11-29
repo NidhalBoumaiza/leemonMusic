@@ -70,12 +70,12 @@ exports.signUp = catchAsync(async (req, res, next) => {
   try {
     await sendEmail({
       email: newAccount.email,
-      subject: "Account activation",
+      subject: "Activation de compte",
       message,
     });
     res.status(200).json({
       status: "success",
-      message: "Your activation Email has been send seccessfully ",
+      message: "Votre e-mail d'activation a été envoyé avec succès ",
     });
   } catch (err) {
     console.log(err);
@@ -84,7 +84,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
     // newAccount.save({ validateBeforeSave: false });
     return next(
       new AppError(
-        "Something wrong happened during the eamil sending ! please try later :)",
+        "Une erreur s'est produite lors de l'envoi de l'e-mail ! Merci d'essayer plus tard .",
         500
       )
     );
@@ -97,13 +97,13 @@ exports.activeAccount = catchAsync(async (req, res, next) => {
     activeAccountToken: token,
   });
   if (!account) {
-    return next(new AppError("The token is not valid !"));
+    return next(new AppError("Le jeton n'est pas valide !"));
   }
   if (Date.now() > account.activeAccountTokenExpires) {
     await Account.findOneAndDelete({ activeAccountToken: token });
     return next(
       new AppError(
-        "Your activation Token is no longer valid , please signup again !"
+        "Votre jeton d'activation n'est plus valide, veuillez vous réinscrire !"
       )
     );
   }
@@ -118,19 +118,21 @@ exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   // check if the user write down his email or not
   if (!email || !password) {
-    return next(new AppError("Please provide your email and password", 400));
+    return next(
+      new AppError("Veuillez saisir votre email et votre mot de passe", 400)
+    );
   }
 
   const account = await Account.findOne({ email }).select("+password");
   if (!account) {
-    return next(new AppError("Email or Password is incorrect", 401));
+    return next(new AppError("E-mail ou mot de passe incorrect", 401));
   }
 
   if (account && !(await account.correctPassword(password, account.password))) {
     if (Date.now() < account.loginAfter) {
       return next(
         new AppError(
-          `You tried many wrong times to connect , please try again after ${account.loginAfter} minutes`,
+          `Vous avez essayé plusieurs fois de vous connecter, veuillez réessayer après ${account.loginAfter} minutes`,
           400
         )
       );
@@ -143,18 +145,18 @@ exports.login = catchAsync(async (req, res, next) => {
       account.save({ validateBeforeSave: false });
       return next(
         new AppError(
-          `You tried many wrong times to connect , please try again after ${account.loginAfter} minutes`,
+          `Vous avez essayé plusieurs fois de vous connecter, veuillez réessayer après ${account.loginAfter} minutes`,
           400
         )
       );
     }
-    return next(new AppError("Email or Password is incorrect", 401));
+    return next(new AppError("E-mail ou mot de passe incorrect", 401));
   }
 
   if (account.accountStatus === false && account.disabledByAdmin === true) {
     return next(
       new AppError(
-        "Your account has been disabled by Admin due to something wrong that you did, please contact the admin .",
+        "Votre compte a été désactivé par l'administrateur en raison d'une action que vous avez commise, veuillez contacter l'administrateur .",
         401
       )
     );
@@ -174,13 +176,13 @@ exports.login = catchAsync(async (req, res, next) => {
     try {
       await sendEmail({
         email: account.email,
-        subject: "Account activation after disabled",
+        subject: "Activation du compte après désactivation",
         message,
       });
 
       return res.status(200).json({
         status: "success",
-        message: "Your activation Email has been send seccessfully ",
+        message: "Votre e-mail d'activation a été envoyé avec succès ",
       });
     } catch {
       // newAccount.activeAccountToken = undefined;
@@ -188,7 +190,7 @@ exports.login = catchAsync(async (req, res, next) => {
       // newAccount.save({ validateBeforeSave: false });
       return next(
         new AppError(
-          "Something wrong happened during the eamil sending ! please try later :)",
+          "Une erreur s'est produite lors de l'envoi de l'e-mail ! Merci d'essayer plus tard:)",
           500
         )
       );
@@ -215,7 +217,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!token) {
     return next(
       new AppError(
-        "You are not logged in ! Please login to access this route .",
+        "Vous n'êtes pas connecté ! Veuillez vous connecter pour accéder à cet page .",
         401
       )
     );
@@ -226,7 +228,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 3) verify if the user still exist in database or no :
   const currentUser = await Account.findById(decoded.id);
   if (!currentUser) {
-    return next(new AppError("User no longer exist !"));
+    return next(new AppError("L'utilisateur n'existe plus !"));
   }
   // verify if the password has been changed after login or no
   // if (!currentUser.changePasswordAfter(decoded.iat)) {
@@ -243,20 +245,22 @@ exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError("You dont have permission to do this action !! "),
+        new AppError("Vous n'avez pas la permission de faire cette action !! "),
         403
       );
     }
     next();
   };
 };
-
+//---------------------------  Forgot Password -----------------------------
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1 - get the email from the client and verify if it exist or not
   const email = req.body.email;
   const account = await Account.findOne({ email });
   if (!account) {
-    return next(new AppError("There is no user with this email adress", 404));
+    return next(
+      new AppError("Il n'y a pas d'utilisateur avec cette adresse e-mail", 404)
+    );
   }
   // 2 - generate a token with which the password is gonna reset :
   const resetToken = account.createPasswordResetToken();
@@ -270,12 +274,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   try {
     await sendEmail({
       email: account.email,
-      subject: "Your password reset token (Valid for 10 minutes) ",
+      subject: "URL de réinitialisation de mot de passe (Valable 10 minutes) ",
       message,
     });
     res.status(200).json({
       status: "success",
-      message: "Your reset Email password has been send seccessfully ",
+      message:
+        "Votre mot de passe de réinitialisation de l'e-mail a été envoyé avec succès ",
     });
   } catch (err) {
     account.passwordResetExpires = undefined;
@@ -283,15 +288,13 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     account.save({ validateBeforeSave: false });
     return next(
       new AppError(
-        "Something wrong happened during the eamil sending ! please try later :)",
+        "Une erreur s'est produite lors de l'envoi de l'e-mail ! Merci d'essayer plus tard .",
         500
       )
     );
   }
 });
 //------------------------------------
-//------------------------------------
-
 exports.resetPassword = catchAsync(async (req, res, next) => {
   //verify if the token passed in the URL is valid and correct or no :
   const hashedToken = crypto
@@ -303,12 +306,21 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetExpires: { $gt: Date.now() },
   });
   if (!account) {
-    return next(new AppError("The  token is Invalid or has expired !! "), 404);
+    return next(new AppError("Le jeton est invalide ou a expiré !! "), 404);
   }
   // -- If the token has not expires and the account exist :
   //   if (req.body.password != req.body.password) {
   //     return next(new AppError("You have to confirm your password"), 404);
   //   }
+  if (account.correctPassword(req.body.password, account.password)) {
+    return next(
+      new AppError(
+        "Saisir une autre mot de passe differnt de votre ancien mot de passe ! "
+      ),
+      400
+    );
+  }
+
   account.password = req.body.password;
   account.passwordConfirm = req.body.passwordConfirm;
   account.passwordResetToken = undefined;
@@ -328,17 +340,30 @@ exports.updateUserPassword = catchAsync(async (req, res, next) => {
     !(await account.correctPassword(req.body.oldPassword, account.password))
   ) {
     return next(
-      new AppError("you have to enter your old password correctly !! ", 404)
+      new AppError(
+        "vous devez entrer votre ancien mot de passe correctement !! ",
+        404
+      )
     );
   }
+
+  if (account.correctPassword(req.body.newPassword, account.password)) {
+    return next(
+      new AppError(
+        "Saisir une autre mot de passe differnt de votre ancien mot de passe ! "
+      ),
+      400
+    );
+  }
+
   account.password = req.body.newPassword;
   account.passwordConfirm = req.body.newpasswordConfirm;
   await account.save();
   try {
     await sendEmail({
       email: account.email,
-      subject: "password modified",
-      message: "Your Passowrd is modified ",
+      subject: "mot de passe modifié",
+      message: "Votre mot de passe est modifié ",
     });
 
     createSendToken(account, 200, res);
@@ -346,5 +371,3 @@ exports.updateUserPassword = catchAsync(async (req, res, next) => {
     console.log(err.message);
   }
 });
-
-//---------------Disable my account --------------------------------------------------

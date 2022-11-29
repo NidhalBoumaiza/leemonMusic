@@ -1,11 +1,14 @@
-/*const catchAsync = require("./../utils/catchAsync");
+const catchAsync = require("./../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Album = require("../models/albumModel");
 const { userInfo } = require("os");
 const { findOne, findOneAndDelete } = require("../models/albumModel");
 
 exports.getAllAlbums = catchAsync(async (req, res, next) => {
-  const albums = await Album.find();
+  const albums = await Album.find().populate({
+    path: "songs",
+    select: "-__v -_id",
+  });
   res.status(201).json({
     status: "success",
     accountNumber: albums.length,
@@ -15,9 +18,8 @@ exports.getAllAlbums = catchAsync(async (req, res, next) => {
 
 exports.createAlbum = catchAsync(async (req, res, next) => {
   const newAlbum = await Album.create({
-    owner: req.user.firstName + " " + req.user.lastName,
+    owner: req.body.owner, //req.user.firstName + " " + req.user.lastName,
     albumName: req.body.albumName,
-    creationDate: req.body.creationDate,
     type: req.body.type,
     songs: req.body.songs,
   });
@@ -28,7 +30,7 @@ exports.createAlbum = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.searchAlbumByName = catchAsync(async (req, res, next) => {
+/*exports.searchAlbumByName = catchAsync(async (req, res, next) => {
   const album = await findOne({ albumName: req.body.albumName });
   if (!album) {
     return next(new AppError("There is no album with this name .", 500));

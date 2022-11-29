@@ -10,7 +10,8 @@ const filtredObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-// //*************************************** */
+
+//-----------------------Update Me -----------------------------------
 // exports.updateMe = catchAsync(async (req, res, next) => {
 //   if (req.body.password || req.body.passwordConfirm) {
 //     return next(
@@ -43,6 +44,8 @@ const filtredObj = (obj, ...allowedFields) => {
 //     user: updatedUser,
 //   });
 // });
+
+//-------------------------Get All Users ---------------------------------------
 
 exports.getAllusers = catchAsync(async (req, res, next) => {
   const users = await Account.find();
