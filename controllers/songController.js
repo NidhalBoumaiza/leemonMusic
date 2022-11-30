@@ -58,6 +58,13 @@ exports.updateSong = catchAsync(async (req, res, next) => {
     song,
   });
 });
+// ------------------------ like song ------------------------
+exports.likeSong = catchAsync(async (req, res, next) => {
+  await findByIdAndUpdate(req.params.id, { likes: likes + 1 });
+  res.status(200).json({
+    status: "liek added succefully",
+  });
+});
 //---------------find song by name ------------------------------
 exports.findSongByName = catchAsync(async (req, res, next) => {
   const songs = await Song.find({ songName: req.body.search });

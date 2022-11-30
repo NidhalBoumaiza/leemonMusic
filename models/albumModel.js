@@ -8,6 +8,7 @@ const albumSchema = mongoose.Schema({
   albumName: {
     type: String,
     required: [true, "Please provide the album name !"],
+    unique: true,
   },
   creationDate: {
     type: Date,
@@ -23,6 +24,7 @@ const albumSchema = mongoose.Schema({
       ref: "Song",
     },
   ],
+  cover: String,
 });
 
 const Album = mongoose.model("Album", albumSchema);

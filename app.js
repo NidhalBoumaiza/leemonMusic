@@ -16,6 +16,10 @@ const songRouter = require("./routes/songRouter");
 app.use(xss());
 app.use(mongoSanitize());
 app.use(helmet());
+//////////-----------------------
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+//*************************
 
 // 1) MIDDLEWARES
 const limiter = rateLimit({

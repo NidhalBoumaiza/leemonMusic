@@ -22,6 +22,7 @@ exports.createAlbum = catchAsync(async (req, res, next) => {
     albumName: req.body.albumName,
     type: req.body.type,
     songs: req.body.songs,
+    cover: req.body.cover,
   });
   res.status(201).json({
     status: "Success",
