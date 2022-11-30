@@ -23,7 +23,7 @@ exports.addSong = catchAsync(async (req, res, next) => {
     name: req.body.name,
     musicSrc: req.body.musicSrc,
     category: req.body.category,
-    singer: req.user.nickName,
+    //singer: req.user.nickName,
     cover: req.body.cover,
   });
   let songs = album.songs;
