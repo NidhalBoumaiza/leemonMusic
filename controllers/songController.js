@@ -11,13 +11,6 @@ const {
 const formattedDate = function (date) {
   let str = new Date(Date.now()).toLocaleString().split(",")[0];
   str = str.split("/").join("-");
-  console.log(str);
-  const yyyy = str.substring(0, 2);
-  const mm = str.substring(3, 5);
-  const dd = str.substr(6, 4);
-  console.log(yyyy);
-  console.log(mm);
-  console.log(dd);
   str = dd + "-" + 12 + "-" + yyyy;
   console.log("apres : " + str);
   return str;

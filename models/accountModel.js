@@ -4,6 +4,7 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
 const accountSchema = mongoose.Schema({
+  profilePicture: String,
   firstName: {
     type: String,
     required: [true, "Please provide your frist name !"],

@@ -37,6 +37,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
       );
     } else {
       newAccount = await Account.create({
+        profilePicture: req.body.profilePicture,
         email: req.body.email,
         password: req.body.password,
         passwordConfirm: req.body.passwordConfirm,
@@ -49,13 +50,14 @@ exports.signUp = catchAsync(async (req, res, next) => {
       });
     }
   } else {
-    newAccount = await Account.create({
-      email: req.body.email,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-    });
+    profilePicture: req.body.profilePicture,
+      (newAccount = await Account.create({
+        email: req.body.email,
+        password: req.body.password,
+        passwordConfirm: req.body.passwordConfirm,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+      }));
   }
 
   const activeToken = newAccount.createActiveAccountToken();
