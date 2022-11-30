@@ -26,10 +26,12 @@ exports.addSong = catchAsync(async (req, res, next) => {
     //singer: req.user.nickName,
     cover: req.body.cover,
   });
-  let songs = album.songs;
-  songs = songs.push(newSong._id);
-  album.songs = songs;
-  album.save({ validateBeforeSave: false });
+  if (album) {
+    let songs = album.songs;
+    songs = songs.push(newSong._id);
+    album.songs = songs;
+    album.save({ validateBeforeSave: false });
+  }
   res.status(201).json({
     status: "success",
     newSong,
