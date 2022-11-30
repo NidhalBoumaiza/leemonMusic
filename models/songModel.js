@@ -14,7 +14,7 @@ const songSchema = mongoose.Schema({
   cover: String,
   musicSrc: {
     type: String,
-    required: [true, "Please Enter song src !"],
+    // required: [true, "Please Enter song src !"],
   },
   category: [],
   likes: {
