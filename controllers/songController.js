@@ -159,4 +159,4 @@ exports.todayHits = catchAsync(async (req, res, next) => {
     todaythits,
   });
 });
-//--------------------- today hits -----------------------
+//--------------------- today album -----------------------
