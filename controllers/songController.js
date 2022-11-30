@@ -7,6 +7,22 @@ const {
   findByIdAndDelete,
   findByIdAndUpdate,
 } = require("../models/albumModel");
+
+const formattedDate = function (date) {
+  let str = new Date(Date.now()).toLocaleString().split(",")[0];
+  str = str.split("/").join("-");
+  console.log(str);
+  const yyyy = str.substring(0, 2);
+  const mm = str.substring(3, 5);
+  const dd = str.substr(6, 4);
+  console.log(yyyy);
+  console.log(mm);
+  console.log(dd);
+  str = dd + "-" + 12 + "-" + yyyy;
+  console.log("apres : " + str);
+  return str;
+};
+
 const { json } = require("express");
 exports.addSong = catchAsync(async (req, res, next) => {
   let album = await Album.findOne({ albumName: req.body.albumName });
@@ -120,6 +136,27 @@ exports.searchBar = catchAsync(async (req, res, next) => {
     songs,
     albums,
     singers,
+  });
+});
+//--------------------- today hits -----------------------
+exports.todayHits = catchAsync(async (req, res, next) => {
+  let today = formattedDate(Date.now());
+  console.log(today);
+  today = new Date(today);
+  console.log(today);
+  const todaythits = await Song.aggregate([
+    {
+      $match: {
+        creationDate: { $lt: today },
+      },
+    },
+    //{ $sort: 1 },
+    { $limit: 10 },
+  ]);
+  res.status(200).json({
+    status: "Todays hits",
+    todaythitsNumber: todaythits.length,
+    todaythits,
   });
 });
 //--------------------- today hits -----------------------
