@@ -162,3 +162,26 @@ exports.todayHits = catchAsync(async (req, res, next) => {
   });
 });
 //--------------------- today album -----------------------
+
+//--------------------- get all songs ---------------------
+exports.getAllSongs = catchAsync(async (req, res, next) => {
+  const songs = await Song.find().populate({
+    select: "-__v -creationDate -musicSrc -category -likes",
+  });
+  res.status(201).json({
+    status: "success",
+    accountNumber: songs.length,
+    songs,
+  });
+});
+//------------------------get album ----------------------------
+exports.getSong = catchAsync(async (req, res, next) => {
+  const song = await Song.findById(req.params.id).populate({
+    select: "-__v -creationDate",
+  });
+  res.status(201).json({
+    status: "success",
+    accountNumber: song.length,
+    song,
+  });
+});

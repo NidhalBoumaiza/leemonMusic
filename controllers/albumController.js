@@ -5,14 +5,25 @@ const { userInfo } = require("os");
 const { findOne, findOneAndDelete } = require("../models/albumModel");
 
 exports.getAllAlbums = catchAsync(async (req, res, next) => {
-  const albums = await Album.find().populate({
-    path: "songs",
-    select: "-__v -_id",
-  });
+  const albums = await Album.find().select(
+    "-__v -owner -creationDate -type -songs"
+  );
   res.status(201).json({
     status: "success",
     accountNumber: albums.length,
     albums,
+  });
+});
+//--------------------- haw haw haw -----------------------------
+exports.getAlbum = catchAsync(async (req, res, next) => {
+  const album = await Album.findById(req.params.id).populate({
+    path: "songs",
+    select: "-__v -creationDate ",
+  });
+  res.status(201).json({
+    status: "success",
+    accountNumber: album.length,
+    album,
   });
 });
 
